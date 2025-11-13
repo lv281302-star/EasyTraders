@@ -397,7 +397,6 @@ function SignupScreen({ onNext }: { onNext: (data: any) => void }) {
 
 // Tela de Planos
 function PlansScreen({ userData, onNext }: { userData: any; onNext: () => void }) {
-  const [selectedPlan, setSelectedPlan] = useState<string | null>(null);
   const [timeLeft, setTimeLeft] = useState(24 * 60 * 60); // 24 horas em segundos
 
   useEffect(() => {
@@ -431,7 +430,8 @@ function PlansScreen({ userData, onNext }: { userData: any; onNext: () => void }
       color: "from-gray-700 to-gray-800",
       borderColor: "border-gray-600",
       popular: false,
-      highlight: true
+      highlight: true,
+      paymentLink: "https://pay.kiwify.com.br/P1L7AnV"
     },
     {
       id: "pro",
@@ -449,7 +449,8 @@ function PlansScreen({ userData, onNext }: { userData: any; onNext: () => void }
       ],
       color: "from-emerald-600 to-emerald-700",
       borderColor: "border-emerald-500",
-      popular: true
+      popular: true,
+      paymentLink: "https://pay.kiwify.com.br/RVnSnGi"
     },
     {
       id: "master",
@@ -470,9 +471,14 @@ function PlansScreen({ userData, onNext }: { userData: any; onNext: () => void }
       color: "from-yellow-600 to-yellow-700",
       borderColor: "border-yellow-500",
       popular: false,
-      promo: true
+      promo: true,
+      paymentLink: "https://pay.kiwify.com.br/UoJLHVm"
     }
   ];
+
+  const handleSelectPlan = (paymentLink: string) => {
+    window.open(paymentLink, '_blank');
+  };
 
   return (
     <div className="min-h-screen bg-black p-4 md:p-8">
@@ -496,10 +502,7 @@ function PlansScreen({ userData, onNext }: { userData: any; onNext: () => void }
           {plans.map((plan) => (
             <div
               key={plan.id}
-              className={`relative bg-gradient-to-br ${plan.color} rounded-3xl p-8 border-2 transition-all hover:scale-105 cursor-pointer ${
-                selectedPlan === plan.id ? `${plan.borderColor} shadow-2xl` : 'border-transparent'
-              } ${plan.popular ? 'ring-4 ring-emerald-500/50' : ''}`}
-              onClick={() => setSelectedPlan(plan.id)}
+              className={`relative bg-gradient-to-br ${plan.color} rounded-3xl p-8 border-2 transition-all hover:scale-105 cursor-pointer border-transparent ${plan.popular ? 'ring-4 ring-emerald-500/50' : ''}`}
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-emerald-500 text-white px-6 py-1 rounded-full text-sm font-bold">
@@ -564,27 +567,21 @@ function PlansScreen({ userData, onNext }: { userData: any; onNext: () => void }
                 ))}
               </ul>
 
-              {selectedPlan === plan.id && (
-                <div className="absolute inset-0 border-4 border-white rounded-3xl pointer-events-none" />
-              )}
+              <Button
+                onClick={() => handleSelectPlan(plan.paymentLink)}
+                className="w-full bg-white text-black hover:bg-gray-100 font-bold py-6 text-lg rounded-xl shadow-lg transition-all hover:scale-105"
+              >
+                Assinar Agora
+                <ArrowRight className="ml-2 w-5 h-5" />
+              </Button>
             </div>
           ))}
         </div>
 
-        {/* CTA */}
-        {selectedPlan && (
-          <div className="text-center">
-            <Button
-              onClick={onNext}
-              size="lg"
-              className="bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-700 hover:to-emerald-800 px-12 py-6 text-xl rounded-xl shadow-2xl shadow-emerald-500/50 animate-bounce"
-            >
-              Continuar para Pagamento
-              <ArrowRight className="ml-2 w-6 h-6" />
-            </Button>
-            <p className="text-gray-400 mt-4 text-sm">Pagamento 100% seguro • Cancele quando quiser</p>
-          </div>
-        )}
+        {/* CTA Adicional */}
+        <div className="text-center">
+          <p className="text-gray-400 text-sm">Pagamento 100% seguro via Kiwify • Cancele quando quiser</p>
+        </div>
       </div>
     </div>
   );
